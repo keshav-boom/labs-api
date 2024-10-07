@@ -40,13 +40,62 @@ export const createLab = async (req, res) => {
     });
 }
 
-export const getAllLabs = async (req, res) =>{
+export const getAllLabs = async (req, res) => {
     const labs = await Labs.find({});
 
     return res.status(200).json({
         success: true,
         status: 200,
         labs
+    });
+}
+
+export const getUserLab = async (req, res) => {
+    const { pocEmail } = req.body;
+
+    const Lab = await Labs.findOne({ pocEmail: pocEmail });
+
+    if (!Lab) {
+        return res.status(404).json({
+            success: false,
+            status: 404,
+            message: "Lab not found"
+        });
+    }
+
+    return res.status(200).json({
+        success: true,
+        status: 200,
+        Lab
+    });
+
+
+}
+
+export const updateLab = async (req, res) => {
+    const { labID, labName, address, profilePic } = req.body;
+
+    const Lab = await Labs.findOne({ _id: labID });
+
+    if (!Lab) {
+        return res.status(404).json({
+            success: false,
+            status: 404,
+            message: "Lab not found"
+        });
+    }
+
+    Lab.labName = labName;
+    Lab.address = address;
+    Lab.profilePic = profilePic;
+
+    await Lab.save();
+
+    return res.status(200).json({
+        success: true,
+        status: 200,
+        message: "Lab updated successfully",
+        Lab
     });
 }
 // get lab
